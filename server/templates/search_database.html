@@ -1,0 +1,198 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>IR - Search Engine</title>
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand ">IR - Search Engine</a>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <h3 class="nav-item"><a class="nav-link" href="../..">Home</a></h3>
+                        <h3 class="nav-item"><a class="nav-link" href="../../#Upload">Upload</a></h3>
+                        <h3 class="nav-item dropdown">
+                            <a class="dropdown-toggle nav-link" id="navbarDropdown" role="button" data-toggle="dropdown">Search</a>
+                            <div class="dropdown-menu"  aria-labelledby="navbarDropdown"  aria-expanded="false">
+                            <a class="dropdown-item"  href = '../../search_infile#Search' >Search in a file</a>
+                            <a class="dropdown-item"  href = '../?page=1#Search' >Search all files</a>
+                            </div>
+                        </h3>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="text-center">
+                        <h1 class="mx-auto my-0 text-white-50">What can you do?</h1>
+                        <p></p>
+                        <h4 class="text-white-50 mx-auto">1. Upload file.</h4>
+                        <p></p>
+                        <h4 class="text-white-50 mx-auto">2. Search words in a file.</h4>
+                        <p></p>
+                        <h4 class="text-white-50 mx-auto">3. Search words from all files.</h4>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Search-->
+        <section class="about-section" id="Search">
+            <div class="container ">
+                <div class="row gx-4 gx-lg-5">
+                    {% if not show %}
+                    <form method="post">
+                        <div class="col-md-10 col-lg-8 mx-auto text-center">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Input somthing you want to search" name = 'search' value = {{user_search}}>
+                                <div class="input-group-append">
+                                <input  class="btn btn-secondary text-white" type="submit" value = 'Search' name = 'ok' ></input >
+                                <a class="btn btn-info text-white" type="button" href = '../#Search'>clear</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>`
+                    {% endif %}
+                    {% if user_search != "" and total_searches == 0%}
+                        <span class = 'text-white text-center h3'>{{search_err}}
+                            <span>
+                                <a class="dropdown-toggle text-white" id="navbarDropdown" role="button" data-toggle="dropdown">which one</a>
+                                <div class="dropdown-menu"  aria-labelledby="navbarDropdown"  aria-expanded="false">
+                                <form method="post">
+                                    {% for word in sim_word %}
+                                    <input class="dropdown-item" type="submit" value = {{word}} name = 'revise'></input>
+                                    {% endfor %}
+                                    </div>
+                                </form>
+                            </span>
+                        </span>
+                    {% elif user_search != "" %}
+                        <p class = 'text-white text-center h3'>The prototype of the search term : ' {{user_search}} '</p>
+                    {% else %}
+                        <p class = 'text-white text-center h3'>{{search_err}}</p>
+                    {% endif %}
+                    {% if index >= 0 and nofile == ""%}
+                        <div class="text-white">
+                            <div class = "text-right h5">
+                                <p>number of characters : {{total_chars}}</p>
+                                <p>number of words : {{total_words}}</p>
+                                <p>number of sentences : {{total_sentences}}</p>
+                                {% if total_searches != 0 %}
+                                <p>number of searches : {{total_searches}}</p>
+                                {% endif %}
+                                {% if total_stopwords != 0 %}
+                                <p>number of stopwords : {{total_stopwords}}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <a class="nav-link" href="../index/?index={{index}}#Show">Original file</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../index?index={{index}}~1#Show">No stopwords</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../index?Statistic={{index}}#Show">Statistic</a>
+                            </li>
+                        </ul>
+                        <div class="container bg-white" id="Show">
+                            <div class="row  justify-content-center">
+                                <ul class="navbar-nav mr-auto">
+                                    <p></p>
+                                    <p class="h2 font-weight-bold font-italic">{{title | safe}}</p>
+                                    <hr class="my-2" />
+                                    {% for sentence in sentences%}
+                                    <p class="h4 font-weight-normal">{{sentence | safe}}</p>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if show %}
+                    <form method="post" action =  '../index/?index={{index}}#Search'>
+                        <div class="col-md-10 col-lg-8 mx-auto text-center">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Input somthing you want to search" name = 'search' value = {{user_search}}>
+                                <div class="input-group-append">
+                                <input  class="btn btn-secondary text-white" type="submit" value = 'Search' name = 'ok' ></input >
+                                <a class="btn btn-info text-white" type="button" href = '../#Search'>clear</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>`
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index/?index={{index}}#Show">Original file</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index?index={{index}}~1#Show">No stopwords</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index?Statistic={{index}}#Show">Statistic</a>
+                        </li>
+                    </ul>
+                    <div id="carouselExampleControls" class="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class = 'row'>
+                                    <img src="{% static name %}" class="d-block w-50 col">
+                                    <div class = 'col text-white-50'>
+                                        <p class = 'h4 text-center'>The frequency of words (origin)</p>
+                                        {% for index, word, tfidf in top %}
+                                        <p class = 'h5 text-center'>{{index}}. {{word}} : {{tfidf}}</p>
+                                        {% endfor %}<p class = 'h2'></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class = 'row'>
+                                    <img src="{% static name_nosw %}" class="d-block w-50 col">
+                                    <div class = 'col text-white-50'>
+                                        <p class = 'h4 text-center'>The frequency of words (no stopwords)</p>
+                                        {% for index, word, tfidf in top_nosw %}
+                                        <p class = 'h5 text-center'>{{index}}. {{word}} : {{tfidf}}</p>
+                                        {% endfor %}<p class = 'h2'></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        <footer class="footer bg-black small text-center text-white-50"></footer>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{% static 'js/scripts.js' %}"></script>
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
+</html>
